@@ -1,13 +1,13 @@
 ROOT := $(shell pwd)
 SHELL = /usr/bin/env bash
-UNAME != uname -s
+UNAME := $(shell uname -s)
 CC_FOR_BUILD ?= cc
 FAKEROOT = fakeroot
 PATH += ":/sbin:/usr/sbin"
 ifeq ($(UNAME),Darwin)
-PRODUCT_NAME != sw_vers -productName
+PRODUCT_NAME := $(shell sw_vers -productName)
 NEWFS_HFS = newfs_hfs
-MAC != echo "$(PRODUCT_NAME)" | grep -qi mac && echo 1
+MAC := $(shell echo "$(PRODUCT_NAME)" | grep -qi mac && echo 1)
 else
 NEWFS_HFS = mkfs.hfsplus
 endif
@@ -19,10 +19,10 @@ STRIP = strip
 AR = ar
 endif
 ifeq ($(MAC),1)
-MACOSX_SYSROOT != xcrun -sdk macosx --show-sdk-path
-TARGET_SYSROOT != xcrun -sdk appletvos --show-sdk-path
-CC != xcrun --find clang
-CXX != xcrun --find clang++
+MACOSX_SYSROOT := $(shell xcrun -sdk macosx --show-sdk-path)
+TARGET_SYSROOT := $(shell xcrun -sdk appletvos --show-sdk-path)
+CC := $(shell xcrun --find clang)
+CXX := $(shell xcrun --find clang++)
 else ifeq ($(UNAME),Darwin)
 CC = clang
 CXX = clang++
@@ -34,7 +34,7 @@ STRIP = cctools-strip
 AR = cctools-ar
 CC = clang
 CFLAGS += -target arm64-apple-tvos
-LD != command -v ld64
+LD := $(shell command -v ld64)
 LDFLAGS += "-fuse-ld=$(LD)"
 MACOSX_SYSROOT ?= $(HOME)/cctools/SDKs/MacOSX.sdk
 TARGET_SYSROOT ?= $(HOME)/cctools/SDKs/AppleTVOS.sdk
@@ -50,7 +50,7 @@ else
 SED = sed
 endif
 
-LTO_TMP != mktemp -d
+LTO_TMP := $(shell mktemp -d)
 
 LDFLAGS += -Wl,-object_path_lto,$(LTO_TMP)/lto.o
 

@@ -39,7 +39,7 @@ dobby/build/libdobby.a:
 		-DCMAKE_SYSTEM_PROCESSOR=arm64 \
 		-DDOBBY_BUILD_SILICON=ON \
 		-DCMAKE_OSX_SYSROOT="$(TARGET_SYSROOT)" \
-		-DCMAKE_OSX_ARCHITECTURES="arm64" \
+		-DCMAKE_OSX_ARCHITECTURES="$(JBINIT_ARCH)" \
 		"$(ROOT)/src/bridgehook/dobby"
 	$(MAKE) -C "dobby/build" dobby_static
 

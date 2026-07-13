@@ -1,4 +1,5 @@
-CFLAGS += -g -arch arm64 -I$(ROOT)/include -Wno-deprecated-declarations
+JBINIT_ARCH ?= arm64e
+CFLAGS += -g -arch $(JBINIT_ARCH) -I$(ROOT)/include -Wno-deprecated-declarations
 CFLAGS += -Wall -Wextra
 
 SHELL = /usr/bin/env bash
@@ -23,7 +24,7 @@ endif
 
 CFLAGS += -DFAKEDYLD_ENABLE_LOGGING
 
-export CFLAGS
+export CFLAGS JBINIT_ARCH
 
 CREATE_UDRW_IMAGE = \
 	set -e; \
@@ -47,6 +48,8 @@ CREATE_UDRW_IMAGE = \
 	$(FAKEROOT) $(HFSPLUS) $(1) addall $(4);
 
 .PHONY: all clean $(patsubst %, %-all, $(SUBDIRS)) $(patsubst %, %-clean, $(SUBDIRS)) libjailbreak
+
+ELLEKIT_DYLIB ?= ellekit/ellekit_build/Build/Products/Release-iphoneos/libellekit.dylib
 
 all: ramdisk.dmg binpack.dmg
 
@@ -118,7 +121,7 @@ binpack.dmg: binpack.tar loader.dmg tvloader.dmg $(patsubst %, %-all, $(SUBDIRS)
 	cp bridgehook/bridgehook.dylib binpack/usr/lib
 	cp loader.dmg binpack
 	cp tvloader.dmg binpack
-	cp ellekit/ellekit_build/Build/Products/Release-iphoneos/libellekit.dylib binpack/usr/lib
+	cp $(ELLEKIT_DYLIB) binpack/usr/lib
 	ln -s ../../../usr/lib/libellekit.dylib binpack/Library/Frameworks/CydiaSubstrate.framework/CydiaSubstrate
 	ln -s ../../../usr/lib/bridgehook.dylib binpack/Library/Frameworks/CydiaSubstrateBridgeOS.framework/CydiaSubstrate
 	$(call CREATE_UDRW_IMAGE,binpack.img,10,plooshra1nfs,binpack)

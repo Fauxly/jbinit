@@ -98,7 +98,17 @@ bool patch_dyld_in_cache_new(struct pf_patch_t __attribute__((unused)) *patch, u
 
     uint32_t* no_cache = cbz +((*cbz >> 5) & 0xfff);
 
-    uint32_t* adrp = pf_find_prev(stream, 10, 0x90000001, 0x9f00001f); // adrp x1, ...
+    /*
+     * In dyld-1377.3 (tvOS 26.5), the DYLD_IN_CACHE getenv is
+     * 43 instructions before the value parser matched by this callback.
+     * Keep the search local to that start() decision while covering the
+     * intervening minimal-info blocks.
+     */
+    uint32_t* adrp = pf_find_prev(stream, 48, 0x90000001, 0x9f00001f); // adrp x1, ...
+    if (!adrp) {
+        LOG("%s: failed to find DYLD_IN_CACHE xref\n", __func__);
+        return false;
+    }
     char* env = pf_follow_xref(arm64_dyld_buf, adrp);
 
     if (!env)

@@ -280,16 +280,19 @@ SHOOK_EXPORT int spawn_hook_common(pid_t *restrict pid, const char *restrict pat
 	blacklistedPaths[6] = JB_ROOT_PATH("/etc/rc.d/libhooker");
 
 	char exec_realPath[PATH_MAX];
-	realpath(path, exec_realPath);
-	for (uint32_t i = 0; blacklistedPaths[i] != NULL; i++) {
-		char blacklisted_realPath[PATH_MAX];
-		realpath(blacklistedPaths[i], blacklisted_realPath);
-		if (!strcmp(blacklisted_realPath, exec_realPath)) {
-			if (access(path, X_OK) == 0) {
-				path = "/cores/binpack/usr/bin/true";
-				argv = (char *const []) { "/cores/binpack/usr/bin/true", NULL };
+	if (realpath(path, exec_realPath) != NULL) {
+		for (uint32_t i = 0; blacklistedPaths[i] != NULL; i++) {
+			char blacklisted_realPath[PATH_MAX];
+			if (realpath(blacklistedPaths[i], blacklisted_realPath) == NULL) {
+				continue;
 			}
-			break;
+			if (!strcmp(blacklisted_realPath, exec_realPath)) {
+				if (access(path, X_OK) == 0) {
+					path = "/cores/binpack/usr/bin/true";
+					argv = (char *const []) { "/cores/binpack/usr/bin/true", NULL };
+				}
+				break;
+			}
 		}
 	}
 

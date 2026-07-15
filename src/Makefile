@@ -116,12 +116,12 @@ binpack.dmg: binpack.tar loader.dmg tvloader.dmg $(patsubst %, %-all, $(SUBDIRS)
 	cp -a $(ROOT)/shared/copyright binpack/usr/share
 	cp -a $(ROOT)/LICENSE binpack/usr/share/copyright/Licnese-plinit.txt
 	chmod 644 binpack/Library/LaunchDaemons/*.plist
-	cp systemhook/systemhook.dylib binpack/usr/lib
-	cp universalhooks/universalhooks.dylib binpack/usr/lib
-	cp bridgehook/bridgehook.dylib binpack/usr/lib
+	install -m755 systemhook/systemhook.dylib binpack/usr/lib
+	install -m755 universalhooks/universalhooks.dylib binpack/usr/lib
+	install -m755 bridgehook/bridgehook.dylib binpack/usr/lib
 	cp loader.dmg binpack
 	cp tvloader.dmg binpack
-	cp $(ELLEKIT_DYLIB) binpack/usr/lib
+	install -m755 $(ELLEKIT_DYLIB) binpack/usr/lib
 	ln -s ../../../usr/lib/libellekit.dylib binpack/Library/Frameworks/CydiaSubstrate.framework/CydiaSubstrate
 	ln -s ../../../usr/lib/bridgehook.dylib binpack/Library/Frameworks/CydiaSubstrateBridgeOS.framework/CydiaSubstrate
 	$(call CREATE_UDRW_IMAGE,binpack.img,10,plooshra1nfs,binpack)

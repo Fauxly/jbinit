@@ -230,6 +230,11 @@ int sysstatuscheck(uint32_t __unused payload_options, uint64_t pflags) {
         FILE* f = fopen("/var/.keep_symlinks", "a");
         if (f) fclose(f);
     } else {
+        /*
+         * Do NOT call remove_jailbreak_files() here: it wipes every jb-* dir in
+         * preboot on each boot, so the bootstrap and all tweaks were lost on
+         * every re-jailbreak. It only belongs to palerain_option_force_revert.
+         */
         remove_bogus_var_jb();
         create_var_jb();
         char fixupPath[150];
